@@ -98,6 +98,9 @@ export class GetLatestObservationsConverter
 
 export class GetLatestObservationsBuilder implements QueryBuilder {
     public getQuery(options: GetLatestObservationsOptions): string {
+        const end = options.selectedTime.toISOString();
+        const start = new Date(options.selectedTime.getTime() - 24 * 60 * 60 * 1000).toISOString();
+
         return (
             "Datastreams?$select=@iot.id,name&$filter=geo.distance(Thing/Locations/location,geography'POINT(" +
             options.center.getLongitude() +
@@ -105,9 +108,17 @@ export class GetLatestObservationsBuilder implements QueryBuilder {
             options.center.getLatitude() +
             ")') lt " +
             options.radius +
-            " and overlaps(phenomenonTime,(now() sub duration'P1d')) and ObservedProperty/@iot.id eq '" +
+            " and overlaps(phenomenonTime," +
+            start +
+            "/" +
+            end +
+            ") and ObservedProperty/@iot.id eq '" +
             options.feature.getId() +
-            "'&$expand=Thing($select=name,description,@iot.id;$expand=Locations($select=location),Datastreams($select=name)/ObservedProperty($select=@iot.id)),Observations($select=result,phenomenonTime;$filter=phenomenonTime gt now() sub duration'P1D';$orderby=phenomenonTime desc;$top=1)"
+            "'&$expand=Thing($select=name,description,@iot.id;$expand=Locations($select=location),Datastreams($select=name)/ObservedProperty($select=@iot.id)),Observations($select=result,phenomenonTime;$filter=phenomenonTime gt " +
+            start +
+            " and phenomenonTime le " +
+            end +
+            ";$orderby=phenomenonTime desc;$top=1)"
         );
     }
 }
@@ -116,6 +127,7 @@ export interface GetLatestObservationsOptions {
     center: Position;
     radius: number;
     feature: Feature;
+    selectedTime: Date;
 }
 
 interface ResultList {

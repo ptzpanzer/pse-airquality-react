@@ -46,12 +46,12 @@ export default class DataProvider {
 
     static async getLatestObservation(
         station: ObservationStation,
-        feature: Feature
+        feature: Feature,
+        selectedTime: Date
     ): Promise<Observation> {
-        //fetch data
         let fr: FrostResult<Observation> = await this.server.request(
             new GetLatestObservationFactory(),
-            { station, feature }
+            { station, feature, selectedTime }
         );
 
         return this.handleFrostResult(fr);
@@ -78,17 +78,16 @@ export default class DataProvider {
     static async getLatestObservations(
         center: Position,
         radius: number,
-        feature: Feature
+        feature: Feature,
+        selectedTime: Date
     ): Promise<Observation[]> {
         let frostFactory = new GetLatestObservationsFactory();
-        let options = { center, radius, feature };
+        let options = { center, radius, feature, selectedTime };
 
-        //fetch data
         let fr: FrostResult<Observation[]> = await this.server.request(
             frostFactory,
             options
         );
-
         return this.handleFrostResult(fr);
     }
 

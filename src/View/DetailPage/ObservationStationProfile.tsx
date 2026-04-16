@@ -83,7 +83,8 @@ export default class ObservationStationProfile extends React.Component<
         for (let feature of features) {
             var observation = await DataProvider.getLatestObservation(
                 this.props.observationStation,
-                feature
+                feature,
+                this.props.selectedTime
             );
             observations.push(observation);
         }
@@ -187,6 +188,7 @@ export default class ObservationStationProfile extends React.Component<
 
 interface IObservationStationProfileProps {
     observationStation: ObservationStation;
+    selectedTime: Date;
 }
 
 interface IObservationStationProfileState {

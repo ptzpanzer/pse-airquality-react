@@ -18,8 +18,8 @@ export default abstract class MapConfiguration {
         );
     }
     abstract getId(): string;
-    abstract async getPins(view: Viewport): Promise<MapPin[]>;
-    abstract async getPolygons(view: Viewport): Promise<Polygon[]>;
+    abstract async getPins(view: Viewport, selectedTime: Date): Promise<MapPin[]>;
+    abstract async getPolygons(view: Viewport, selectedTime: Date): Promise<Polygon[]>;
     abstract getScale(): Scale;
     abstract getFeatures(): Feature[];
 }

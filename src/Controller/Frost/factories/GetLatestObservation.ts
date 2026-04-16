@@ -47,7 +47,9 @@ export class GetLatestObservationBuilder implements QueryBuilder {
             options.station.getId() +
             "' and ObservedProperty/@iot.id eq '" +
             options.feature.getId() +
-            "'&$expand=Observations($top=1;$orderby=phenomenonTime desc;$select=result,phenomenonTime)"
+            "'&$expand=Observations($filter=phenomenonTime le " +
+            options.selectedTime.toISOString() +
+            ";$top=1;$orderby=phenomenonTime desc;$select=result,phenomenonTime)"
         );
     }
 }
@@ -55,6 +57,7 @@ export class GetLatestObservationBuilder implements QueryBuilder {
 export interface GetLatestObservationOptions {
     station: ObservationStation;
     feature: Feature;
+    selectedTime: Date;
 }
 
 export interface ResultList {

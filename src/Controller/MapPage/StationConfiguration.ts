@@ -20,20 +20,21 @@ export default class StationConfiguration extends MapConfiguration {
         this.selectedFeature = feature;
     }
 
-    async getPins(view: Viewport): Promise<MapPin[]> {
+    async getPins(view: Viewport, selectedTime: Date): Promise<MapPin[]> {
         var latestObs: Observation[] = await DataProvider.getLatestObservations(
             view.getCenter(),
             view.getZoom(),
-            this.selectedFeature
+            this.selectedFeature,
+            selectedTime
         );
         return latestObs
             .filter((o) => o.getValue() < 5 * this.selectedFeature.getLimit())
-            .map((o) =>
+            .map((o) => 
                 this.buildMapPin(o.getObservationStation(), o.getValue())
             );
     }
 
-    async getPolygons(view: Viewport): Promise<Polygon[]> {
+    async getPolygons(view: Viewport, selectedTime: Date): Promise<Polygon[]> {
         return [];
     }
 

@@ -59,6 +59,7 @@ export default class DetailPage extends React.Component<
                         {this.state.obs ? (
                             <ObservationStationProfile
                                 observationStation={this.state.obs}
+                                selectedTime={this.props.selectedTime}
                             />
                         ) : (
                             <CircularProgress />
@@ -84,6 +85,7 @@ export default class DetailPage extends React.Component<
 
 interface IDetailPageProps {
     match: { params: { id: string } };
+    selectedTime: Date;
 }
 
 interface IDetailPageState {

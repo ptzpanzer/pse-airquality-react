@@ -26,6 +26,7 @@ interface State {
     polygons: Polygon[];
     viewport: Viewport;
     additionalPins: MapPin[];
+    selectedTime: string;
 }
 
 interface Props {
@@ -48,8 +49,19 @@ class MapPage extends React.Component<Props, State> {
             pins: [],
             polygons: [],
             additionalPins: [],
+            selectedTime: this.getDefaultSelectedTime(),
         };
         this.update();
+    }
+
+    private getDefaultSelectedTime(): string {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        return now.toISOString().slice(0, 16);
+    }   
+
+    private getSelectedDate(): Date {
+        return new Date(this.state.selectedTime);
     }
 
     // Set station as source for the StationInfo Popup
@@ -61,8 +73,9 @@ class MapPage extends React.Component<Props, State> {
 
     // Reload Pins and Polygons
     update() {
-        var pinPromise = this.mapController.getPins();
-        var polyPromise = this.mapController.getPolygons();
+        const selectedDate = this.getSelectedDate();
+        var pinPromise = this.mapController.getPins(selectedDate);
+        var polyPromise = this.mapController.getPolygons(selectedDate);
         Promise.all([pinPromise, polyPromise]).then((pinPoly) => {
             this.setState({
                 pins: pinPoly[0],
@@ -114,7 +127,7 @@ class MapPage extends React.Component<Props, State> {
             });
         }
         this.setState({ selectedStation: null });
-        var promise = this.mapController.handlePopup(pin);
+        var promise = this.mapController.handlePopup(pin, this.getSelectedDate());
         promise.then((o) => this.changePopupStation(o.getObservationStation()));
         return promise;
     }
@@ -133,6 +146,16 @@ class MapPage extends React.Component<Props, State> {
                         .replace("{term}", term)
                 );
             }
+        );
+    }
+
+    onSelectedTimeChange(value: string) {
+        this.setState(
+            {
+                selectedTime: value,
+                selectedStation: null,
+            },
+            () => this.update()
         );
     }
 
@@ -190,6 +213,17 @@ class MapPage extends React.Component<Props, State> {
                             this.onViewportChange(view);
                         }}
                     />
+                    <div style={{ marginTop: "8px" }}>
+                        <label htmlFor="selected-time" style={{ marginRight: "8px" }}>
+                            Time:
+                        </label>
+                        <input
+                            id="selected-time"
+                            type="datetime-local"
+                            value={this.state.selectedTime}
+                            onChange={(e) => this.onSelectedTimeChange(e.target.value)}
+                        />
+                    </div>
                 </Box>
                 <Box className="map">
                     <Map

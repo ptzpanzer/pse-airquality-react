@@ -44,11 +44,12 @@ export class MapController {
     }
 
     // Called when a pin on the map is clicked, gets information from server
-    async handlePopup(pin: MapPin): Promise<Observation> {
+    async handlePopup(pin: MapPin, selectedTime: Date): Promise<Observation> {
         var station = await DataProvider.getStation(pin.getId());
         return DataProvider.getLatestObservation(
             station,
-            this.config.getFeatures()[0]
+            this.config.getFeatures()[0],
+            selectedTime
         );
     }
 
@@ -79,13 +80,13 @@ export class MapController {
     }
 
     // Pins for leaflet map
-    async getPins(): Promise<MapPin[]> {
-        return this.config.getPins(this.viewport);
+    async getPins(selectedTime: Date): Promise<MapPin[]> {
+        return this.config.getPins(this.viewport, selectedTime);
     }
 
     // Polygons to be drawn
-    async getPolygons(): Promise<Polygon[]> {
-        return this.config.getPolygons(this.viewport);
+    async getPolygons(selectedTime: Date): Promise<Polygon[]> {
+        return this.config.getPolygons(this.viewport, selectedTime);
     }
 
     // The leaflet scale of the map

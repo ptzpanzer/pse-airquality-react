@@ -21,15 +21,16 @@ export default class PolygonConfiguration extends MapConfiguration {
         return ID;
     }
 
-    async getPins(view: Viewport): Promise<MapPin[]> {
+    async getPins(view: Viewport, selectedTime: Date): Promise<MapPin[]> {
         return [];
     }
 
-    async getPolygons(view: Viewport): Promise<Polygon[]> {
+    async getPolygons(view: Viewport, selectedTime: Date): Promise<Polygon[]> {
         var observations = await DataProvider.getLatestObservations(
             view.getCenter(),
             view.getRadius(),
-            this.selectedFeature
+            this.selectedFeature,
+            selectedTime
         );
         var polys = this.triangulate(
             observations.filter(

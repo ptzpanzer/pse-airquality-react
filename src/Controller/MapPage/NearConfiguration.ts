@@ -61,12 +61,13 @@ export default class NearConfiguration extends MapConfiguration {
         return new Scale(true, sc);
     }
 
-    async getPins(view: Viewport): Promise<MapPin[]> {
+    async getPins(view: Viewport, selectedTime: Date): Promise<MapPin[]> {
         var observations = (
             await DataProvider.getLatestObservations(
                 view.getCenter(),
                 view.getZoom(),
-                this.selectedFeature
+                this.selectedFeature,
+                selectedTime
             )
         ).filter((o) => o.getValue() < 5 * this.selectedFeature.getLimit());
 
@@ -81,7 +82,7 @@ export default class NearConfiguration extends MapConfiguration {
         return pins;
     }
 
-    async getPolygons(view: Viewport): Promise<Polygon[]> {
+    async getPolygons(view: Viewport, selectedTime: Date): Promise<Polygon[]> {
         return [];
     }
     getScale(): Scale {
