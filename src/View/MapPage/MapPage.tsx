@@ -11,7 +11,7 @@ import { Observation } from "../../Model/Observation";
 import FeatureSelect from "./FeatureSelect";
 import Search from "./Search";
 import Legend from "./Legend";
-import { Box, Theme } from "@material-ui/core";
+import { Box, Theme, TextField } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import { Color } from "../../Model/Color";
 
@@ -213,17 +213,20 @@ class MapPage extends React.Component<Props, State> {
                             this.onViewportChange(view);
                         }}
                     />
-                    <div style={{ marginTop: "8px" }}>
-                        <label htmlFor="selected-time" style={{ marginRight: "8px" }}>
-                            Time:
-                        </label>
-                        <input
-                            id="selected-time"
-                            type="datetime-local"
-                            value={this.state.selectedTime}
-                            onChange={(e) => this.onSelectedTimeChange(e.target.value)}
-                        />
-                    </div>
+                </Box>
+                <Box className="time-control">
+                    <TextField
+                        id="selected-time"
+                        label="Time"
+                        type="datetime-local"
+                        value={this.state.selectedTime}
+                        onChange={(e) => this.onSelectedTimeChange(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
                 </Box>
                 <Box className="map">
                     <Map
